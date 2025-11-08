@@ -1,0 +1,163 @@
+# General
+.DS_Store
+*.DS_Store
+*.log
+*.pid
+*.sqlite3
+pg_hba.conf
+
+# Environments
+*.env
+.env.local
+.env.main
+.env.global
+.env
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+.env.dev
+.env.prod
+
+# Dependency Directories and Files
+/node_modules
+/.pnp
+.pnp.js
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual Environments
+.venv
+venv/
+ENV/
+env/
+
+# Testing and Coverage
+/coverage
+.pytest_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+*.cover
+*.py,cover
+.hypothesis/
+htmlcov/
+nosetests.xml
+coverage.xml
+
+# Build and Distribution
+/build
+dist/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+target/
+
+# Logs and Temporary Files
+pip-log.txt
+pip-delete-this-directory.txt
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+yarn.lock
+package-lock.json
+
+# Documentation
+docs/_build/
+/site
+
+# Static and Media Files
+media_files
+media
+static/*
+!static/default
+
+# IDEs and Editors
+.idea
+.vscode
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# mypy and Type Checkers
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+
+# IPython
+profile_default/
+ipython_config.py
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# Translations
+*.mo
+*.pot
+
+# Python Project Specific
+.Python
+*.manifest
+*.spec
+
+# Django
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask
+instance/
+.webassets-cache
+
+# Scrapy
+.scrapy
+
+# PyInstaller
+*.sage.py
+
+# Spyder
+.spyderproject
+.spyproject
+
+# Rope
+.ropeproject
+
+# Supervisor
+*.pid
+
+# Ruff and Linters
+.ruff_cache/
+.import_linter_cache/
+
+# Poetry
+.poetry
+
+# Claude
+.claude/
+CLAUDE.md
+
+# Local tests
+local_tests/

@@ -1,0 +1,86 @@
+x-restart_and_tty: &restart_and_tty
+  restart: unless-stopped
+  tty: true
+
+x-postgres: &postgres
+  <<: *restart_and_tty
+  image: postgres:17.5
+  healthcheck:
+    test: bash -c "pg_isready --username=$${POSTGRES_USER} --dbname=$${POSTGRES_DB}"
+    start_period: 5s
+    start_interval: 1s
+
+x-depends_on_db: &depends_on_db
+  db:
+    condition: service_healthy
+
+x-src: &launch
+  <<: *restart_and_tty
+  init: true
+
+x-api: &api
+  <<: *launch
+  ports: [ "127.0.0.1:${APP_PORT}:${APP_PORT}" ]
+
+x-db_envs: &db_envs
+  POSTGRES_USER: core
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  POSTGRES_DB: ${POSTGRES_DB}
+  TZ: ${TIMEZONE}
+
+
+services:
+  db:
+    profiles: [ "prod", "dev" ]
+    <<: *postgres
+    environment:
+      <<: *db_envs
+    volumes:
+      - db_data:/var/lib/postgresql/data/
+
+  api:
+    <<: *api
+    profiles: [ "prod" ]
+    build:
+      context: .
+      target: api
+    environment:
+      DEBUG: 0
+      MODE: "PROD"
+      <<: *db_envs
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    depends_on:
+      <<: *depends_on_db
+
+  api-dev:
+    <<: *api
+    profiles: [ "dev" ]
+    build:
+      context: .
+      target: api
+    environment:
+      DEBUG: 1
+      MODE: "DEV"
+      <<: *db_envs
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    depends_on:
+      <<: *depends_on_db
+    volumes:
+      - .:/app/api
+
+  db_client:
+    profiles: [ "dev" ]
+    <<: *restart_and_tty
+    depends_on:
+      <<: *depends_on_db
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports: [ "127.0.0.1:5050:80" ]
+
+
+volumes:
+  db_data:
