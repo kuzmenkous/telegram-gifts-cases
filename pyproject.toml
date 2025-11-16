@@ -28,6 +28,7 @@ dependencies = [
     "telethon (>=1.42.0,<2.0.0)",
     "uvicorn (>=0.35.0,<0.36.0)",
     "uvloop (>=0.22.1,<0.23.0)",
+    "faststream (>=0.6.3,<0.7.0)",
 ]
 
 [tool.poetry.requires-plugins]
