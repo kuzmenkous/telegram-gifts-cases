@@ -2,7 +2,7 @@ from functools import lru_cache
 
 from dotenv import load_dotenv
 from pydantic import Field
-from pydantic.networks import PostgresDsn
+from pydantic.networks import AmqpDsn, PostgresDsn
 from pydantic_settings import BaseSettings
 
 from src.core.pydantic_types import TimezoneInfo
@@ -12,14 +12,8 @@ class AppSettings(BaseSettings, env_prefix="app_"):
     name: str = "Telegram Gifts Cases API"
     version: int = 1
     secret_key: str
-    domain: str = "localhost:8000"
-    protocol: str = "http"
     docs_url: str = "/docs"
     redoc_url: str = "/redoc"
-
-    @property
-    def base_url(self) -> str:
-        return f"{self.protocol}://{self.domain}"
 
 
 class CorsSettings(BaseSettings, env_prefix="cors_"):
@@ -47,10 +41,32 @@ class DatabaseSettings(BaseSettings, env_prefix="postgres_"):
         )
 
 
-class JWTSettings(BaseSettings, env_prefix="jwt_"):
-    algorithm: str
-    access_token_expire: int
-    refresh_token_expire: int
+class TelegramSettings(BaseSettings, env_prefix="telegram_"):
+    api_id: int
+    api_hash: str
+    bot_token: str
+    client_session: str
+
+
+class RabbitSettings(BaseSettings, env_prefix="rabbitmq_"):
+    user: str
+    password: str
+    host: str
+
+    @property
+    def url(self) -> str:
+        return str(
+            AmqpDsn.build(
+                scheme="amqp",
+                username=self.user,
+                password=self.password,
+                host=self.host,
+            )
+        )
+
+
+class PortalsAPISettings(BaseSettings, env_prefix="portals_api_"):
+    url: str
 
 
 class Settings(BaseSettings):
@@ -63,8 +79,12 @@ class Settings(BaseSettings):
     cors: CorsSettings = Field(default_factory=CorsSettings)
     # Database
     db: DatabaseSettings = Field(default_factory=DatabaseSettings)
-    # JWT
-    jwt: JWTSettings = Field(default_factory=JWTSettings)
+    # Telegram
+    telegram: TelegramSettings = Field(default_factory=TelegramSettings)
+    # RabbitMQ
+    rabbit: RabbitSettings = Field(default_factory=RabbitSettings)
+    # Portals API
+    portals_api: PortalsAPISettings = Field(default_factory=PortalsAPISettings)
 
 
 @lru_cache
