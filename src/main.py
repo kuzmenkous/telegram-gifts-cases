@@ -6,6 +6,7 @@ from src.core.config import settings
 from src.core.schemas.errors import ServerErrorSchema
 from src.core.schemas.validation import ValidationErrorListSchema
 from src.exception_handlers import get_exception_handlers
+from src.routers import admins_router, auth_router
 
 # App configuration
 app = FastAPI(
@@ -68,5 +69,5 @@ app.add_middleware(
 )
 
 # Include routers
-for router in ():  # type: ignore[var-annotated]
+for router in (auth_router, admins_router):
     app.include_router(router)

@@ -16,8 +16,12 @@ Password = Annotated[SecretStr, Field(min_length=6)]
 _PasswordForCheck = Annotated[Password, Field(exclude=True)]
 
 
-class AdminBase(BaseModel):
+class UsernameMixin(BaseModel):
     username: str = Field(min_length=3, max_length=50)
+
+
+class AdminBase(UsernameMixin, BaseModel):
+    pass
 
 
 class AdminCreate(AdminBase):
@@ -39,7 +43,11 @@ class AdminCreate(AdminBase):
         return password_hasher.hash(self.password.get_secret_value())
 
 
-class AdminRead(CreatedAtMixin, AdminBase, IdSchema):
+class AdminUpdate(UsernameMixin, BaseModel):
+    is_superadmin: bool
+
+
+class AdminRead(CreatedAtMixin, AdminUpdate, AdminBase, IdSchema):
     pass
 
 
@@ -50,4 +58,4 @@ class AdminCredentials(BaseModel):
 
 class Login(BaseModel):
     status: Literal["ok"] = "ok"
-    user: AdminRead
+    admin: AdminRead

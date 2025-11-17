@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from sqlalchemy import ForeignKey, false, text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.models.base import BaseModel
 
@@ -26,6 +26,8 @@ class SessionModel(BaseModel):
     admin_id: Mapped[int] = mapped_column(
         ForeignKey("admins.id", ondelete="CASCADE"), index=True
     )
+
+    admin: Mapped["AdminModel"] = relationship()
 
     def __str__(self) -> str:
         return f"Session: {self.token}. Admin ID: {self.admin_id}"
