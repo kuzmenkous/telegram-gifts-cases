@@ -1,16 +1,26 @@
 from typing import Annotated, Literal
 
-from fastapi import APIRouter, Depends, Path, status
+from fastapi import APIRouter, Body, Depends, Path, status
 from pydantic import PositiveInt
+from pydantic.json_schema import SkipJsonSchema
 
 from src.dependencies.admin import (
     LoggedInAdmin,
+    get_admin_by_api_token,
     get_admin_model,
     get_superadmin,
 )
 from src.dependencies.db import Session
+from src.domain.admin import (
+    AdminCreate,
+    AdminFilters,
+    AdminRead,
+    AdminUpdate,
+    OrderBy,
+)
+from src.domain.base import ItemsPage, Pagination
+from src.domain.constants.api import openapi_extra_for_pagination
 from src.models.admin import AdminModel
-from src.schemas.admin import AdminCreate, AdminRead, AdminUpdate
 from src.services.admin import AdminService
 
 admins_router = APIRouter(prefix="/admins", tags=["Admins"])
@@ -26,6 +36,27 @@ async def create_admin(session: Session, admin_create: AdminCreate) -> int:
     return await AdminService(session).create_admin(admin_create)
 
 
+@admins_router.post(
+    "/list",
+    dependencies=(Depends(get_admin_by_api_token),),
+    openapi_extra=openapi_extra_for_pagination,
+)
+async def get_admins(
+    filters: Annotated[AdminFilters, Depends()],
+    pagination: Annotated[Pagination, Depends()],
+    session: Session,
+    order_by: Annotated[
+        OrderBy | SkipJsonSchema[None], Body(min_length=1)
+    ] = None,
+) -> ItemsPage[AdminRead]:
+    if order_by is None or len(order_by) == 0:
+        order_by = {"created_at": "desc"}
+
+    return await AdminService(session).get_admins(
+        filters, pagination, order_by
+    )
+
+
 @admins_router.get("/{admin_id_or_me}")
 async def get_admin(
     session: Session,
@@ -39,7 +70,11 @@ async def get_admin(
     return AdminRead.model_validate(admin_model)
 
 
-@admins_router.put("/{admin_id}", dependencies=(Depends(get_superadmin),))
+@admins_router.put(
+    "/{admin_id}",
+    dependencies=(Depends(get_superadmin),),
+    status_code=status.HTTP_204_NO_CONTENT,
+)
 async def update_admin(
     admin_model: Annotated[AdminModel, Depends(get_admin_model)],
     admin_update: AdminUpdate,

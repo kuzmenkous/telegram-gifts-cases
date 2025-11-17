@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from functools import cached_property
 from typing import Annotated, Literal, Self
 
@@ -9,8 +10,8 @@ from pydantic import (
     model_validator,
 )
 
-from src.constants.admin import password_hasher
-from src.schemas.base import CreatedAtMixin, IdSchema
+from src.domain.base import CreatedAtMixin, IdSchema, OrderByBase
+from src.domain.constants.admin import password_hasher
 
 Password = Annotated[SecretStr, Field(min_length=6)]
 _PasswordForCheck = Annotated[Password, Field(exclude=True)]
@@ -59,3 +60,12 @@ class AdminCredentials(BaseModel):
 class Login(BaseModel):
     status: Literal["ok"] = "ok"
     admin: AdminRead
+
+
+@dataclass
+class AdminFilters:
+    username__ilike: str | None = None
+    is_superadmin: bool | None = None
+
+
+type OrderBy = OrderByBase[Literal["username", "is_superadmin", "created_at"]]

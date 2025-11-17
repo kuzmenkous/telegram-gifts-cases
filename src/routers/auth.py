@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, Response
 
 from src.dependencies.admin import SessionToken, get_admin_by_credentials
 from src.dependencies.db import Session
+from src.domain.admin import AdminRead, Login
 from src.models.admin import AdminModel, SessionModel
-from src.schemas.admin import AdminRead, Login
 from src.services.admin import SessionService
 from src.utils import set_auth_data_to_response_cookie
 

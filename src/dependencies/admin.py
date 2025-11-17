@@ -5,10 +5,10 @@ from fastapi import Body, Depends, HTTPException, Response, status
 from fastapi.security.api_key import APIKeyCookie
 from pydantic import PositiveInt
 
-from src.constants.admin import SESSION_TOKEN
 from src.dependencies.db import Session
+from src.domain.admin import AdminCredentials
+from src.domain.constants.admin import SESSION_TOKEN
 from src.models.admin import AdminModel, SessionModel
-from src.schemas.admin import AdminCredentials
 from src.services.admin import AdminService, SessionService
 from src.utils import set_auth_data_to_response_cookie
 

@@ -1,6 +1,6 @@
 from fastapi import Response
 
-from src.constants.admin import SESSION_TOKEN
+from src.domain.constants.admin import SESSION_TOKEN
 from src.models.admin import SessionModel
 
 

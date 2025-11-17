@@ -5,12 +5,12 @@ from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi.responses import ORJSONResponse, Response
 from sqlalchemy.exc import IntegrityError, NoResultFound
 
-from src.exceptions.http.base import BaseFieldValidationHTTPException
-from src.schemas.errors import ServerErrorSchema
-from src.schemas.validation import (
+from src.domain.errors import ServerErrorSchema
+from src.domain.validation import (
     ValidationErrorListSchema,
     ValidationErrorSchema,
 )
+from src.exceptions.http.base import BaseFieldValidationHTTPException
 
 log = logging.getLogger(__name__)
 

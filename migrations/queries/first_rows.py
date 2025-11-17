@@ -4,8 +4,8 @@ from pydantic import Field
 from pydantic_settings import BaseSettings
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncSession
 
+from src.domain.admin import AdminCreate, _PasswordForCheck
 from src.models.admin import AdminModel
-from src.schemas.admin import AdminCreate, _PasswordForCheck
 
 
 class SuperadminCredentials(AdminCreate, BaseSettings):

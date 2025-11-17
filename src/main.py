@@ -3,10 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import ORJSONResponse
 
 from src.core.config import settings
+from src.domain.errors import ServerErrorSchema
+from src.domain.validation import ValidationErrorListSchema
 from src.exception_handlers import get_exception_handlers
 from src.routers import admins_router, auth_router
-from src.schemas.errors import ServerErrorSchema
-from src.schemas.validation import ValidationErrorListSchema
 
 # App configuration
 app = FastAPI(
