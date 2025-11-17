@@ -2,7 +2,7 @@ import logging
 
 from fastapi import Request, status
 from fastapi.exceptions import HTTPException, RequestValidationError
-from fastapi.responses import ORJSONResponse, Response
+from fastapi.responses import ORJSONResponse
 from sqlalchemy.exc import IntegrityError, NoResultFound
 
 from src.domain.errors import ServerErrorSchema
@@ -85,8 +85,13 @@ async def http_400s_status_exception_handler(
 
 async def no_result_found_exception_handler(
     _request: Request, _exc: NoResultFound
-) -> Response:
-    return Response(status_code=status.HTTP_404_NOT_FOUND)
+) -> ORJSONResponse:
+    return ORJSONResponse(
+        status_code=status.HTTP_404_NOT_FOUND,
+        content=ServerErrorSchema(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Not found"
+        ).model_dump(),
+    )
 
 
 async def integrity_error_exception_handler(
