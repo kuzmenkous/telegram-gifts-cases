@@ -20,7 +20,8 @@ class AdminService(BaseService):
                 self._session, credentials.username
             )
             password_hasher.verify(
-                admin_model.hashed_password, credentials.password.get_secret_value()
+                admin_model.hashed_password,
+                credentials.password.get_secret_value(),
             )
         except (NoResultFound, VerifyMismatchError):
             raise HTTPException(
