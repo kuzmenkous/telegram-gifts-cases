@@ -16,24 +16,24 @@ class AdminService(BaseService):
         self, credentials: AdminCredentials
     ) -> AdminModel:
         try:
-            admin = await AdminRepository().get_admin_by_username(
+            admin_model = await AdminRepository().get_admin_by_username(
                 self._session, credentials.username
             )
             password_hasher.verify(
-                admin.hashed_password, credentials.password.get_secret_value()
+                admin_model.hashed_password, credentials.password.get_secret_value()
             )
         except (NoResultFound, VerifyMismatchError):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect username or password",
             )
-        if password_hasher.check_needs_rehash(admin.hashed_password):
-            admin.hashed_password = password_hasher.hash(
+        if password_hasher.check_needs_rehash(admin_model.hashed_password):
+            admin_model.hashed_password = password_hasher.hash(
                 credentials.password.get_secret_value()
             )
-            self._session.add(admin)
+            self._session.add(admin_model)
             await self._session.commit()
-        return admin
+        return admin_model
 
     async def get_admin_by_id(self, admin_id: int) -> AdminModel:
         return await AdminRepository().get_admin(self._session, admin_id)
@@ -54,15 +54,15 @@ class AdminService(BaseService):
 
 class SessionService(BaseService):
     async def get_session_by_token(self, token: UUID) -> SessionModel:
-        admin_session = await SessionRepository().get_session_by_token(
+        session_model = await SessionRepository().get_session_by_token(
             self._session, token
         )
-        if not admin_session:
+        if not session_model:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Could not validate credentials",
             )
-        return admin_session
+        return session_model
 
     async def delete_session_by_token(self, token: UUID) -> None:
         await SessionRepository().delete_session_by_token(self._session, token)

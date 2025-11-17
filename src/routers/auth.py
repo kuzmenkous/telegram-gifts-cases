@@ -18,10 +18,10 @@ async def log_in(
     admin: Annotated[AdminModel, Depends(get_admin_by_credentials)],
     response: Response,
 ) -> Login:
-    admin_session = SessionModel(admin_id=admin.id)
-    db_session.add(admin_session)
+    session_model = SessionModel(admin_id=admin.id)
+    db_session.add(session_model)
     await db_session.flush()
-    set_auth_data_to_response_cookie(response, admin_session)
+    set_auth_data_to_response_cookie(response, session_model)
     return Login(admin=AdminRead.model_validate(admin))
 
 
