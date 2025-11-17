@@ -11,6 +11,7 @@ from src.core.pydantic_types import TimezoneInfo
 class AppSettings(BaseSettings, env_prefix="app_"):
     name: str = "Telegram Gifts Cases API"
     version: int = 1
+    session_token_expire: int
     secret_key: str
     docs_url: str = "/docs"
     redoc_url: str = "/redoc"
@@ -46,6 +47,7 @@ class TelegramSettings(BaseSettings, env_prefix="telegram_"):
     api_hash: str
     bot_token: str
     client_session: str
+    init_data_expire: int
 
 
 class RabbitSettings(BaseSettings, env_prefix="rabbitmq_"):

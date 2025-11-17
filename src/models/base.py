@@ -3,10 +3,10 @@ from datetime import datetime
 from typing import Annotated, Any, ClassVar
 
 from sqlalchemy import (
+    BigInteger,
     DateTime,
     Enum,
     Identity,
-    Integer,
     MetaData,
     func,
     inspect,
@@ -32,8 +32,9 @@ metadata = MetaData(
     }
 )
 
+type BigInt = int
 Id = Annotated[
-    int, mapped_column(Integer, Identity(), primary_key=True, sort_order=-1)
+    int, mapped_column(BigInteger, Identity(), primary_key=True, sort_order=-1)
 ]
 
 
@@ -49,6 +50,7 @@ class BaseModel(AsyncAttrs, DeclarativeBase):
     metadata = metadata
 
     type_annotation_map: ClassVar[dict[Any, Any]] = {
+        BigInt: BigInteger,
         dict[str, Any]: JSONB,
         dict[str, str]: JSONB,
         datetime: DateTime(timezone=True),
