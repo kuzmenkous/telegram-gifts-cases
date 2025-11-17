@@ -75,8 +75,8 @@ class AdminService(BaseService):
             pagination=pagination,
         )
 
-    async def delete_admin(self, admin_id: int) -> None:
-        await AdminRepository(self._session).delete_admin(admin_id)
+    async def delete_admin(self, admin_model: AdminModel) -> None:
+        await AdminRepository(self._session).delete_admin(admin_model)
 
 
 class SessionService(BaseService):
@@ -91,5 +91,5 @@ class SessionService(BaseService):
             )
         return session_model
 
-    async def delete_session_by_token(self, token: UUID) -> None:
-        await SessionRepository(self._session).delete_session_by_token(token)
+    async def delete_session(self, session_model: SessionModel) -> None:
+        await SessionRepository(self._session).delete_session(session_model)

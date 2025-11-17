@@ -88,5 +88,8 @@ async def update_admin(
     dependencies=(Depends(get_superadmin),),
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def delete_admin(session: Session, admin_id: PositiveInt) -> None:
-    await AdminService(session).delete_admin(admin_id)
+async def delete_admin(
+    session: Session,
+    admin_model: Annotated[AdminModel, Depends(get_admin_model)],
+) -> None:
+    await AdminService(session).delete_admin(admin_model)

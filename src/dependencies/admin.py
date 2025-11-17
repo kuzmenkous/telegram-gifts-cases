@@ -13,12 +13,6 @@ from src.services.admin import AdminService, SessionService
 from src.utils import set_auth_data_to_response_cookie
 
 
-async def get_admin_by_credentials(
-    session: Session, credentials: Annotated[AdminCredentials, Body()]
-) -> AdminModel:
-    return await AdminService(session).get_admin_by_credentials(credentials)
-
-
 async def get_session_token(
     session_token: Annotated[
         str,
@@ -35,6 +29,18 @@ async def get_session_token(
 
 
 SessionToken = Annotated[UUID, Depends(get_session_token)]
+
+
+async def get_session_model(
+    db_session: Session, session_token: SessionToken
+) -> SessionModel:
+    return await SessionService(db_session).get_session_by_token(session_token)
+
+
+async def get_admin_by_credentials(
+    session: Session, credentials: Annotated[AdminCredentials, Body()]
+) -> AdminModel:
+    return await AdminService(session).get_admin_by_credentials(credentials)
 
 
 async def get_admin_session_by_api_token(

@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Response
 
-from src.dependencies.admin import SessionToken, get_admin_by_credentials
+from src.dependencies.admin import get_admin_by_credentials, get_session_model
 from src.dependencies.db import Session
 from src.domain.admin import AdminRead, Login
 from src.models.admin import AdminModel, SessionModel
@@ -26,5 +26,8 @@ async def log_in(
 
 
 @auth_router.post("/logout")
-async def log_out(db_session: Session, session_token: SessionToken) -> None:
-    await SessionService(db_session).delete_session_by_token(session_token)
+async def log_out(
+    db_session: Session,
+    session_model: Annotated[SessionModel, Depends(get_session_model)],
+) -> None:
+    await SessionService(db_session).delete_session(session_model)

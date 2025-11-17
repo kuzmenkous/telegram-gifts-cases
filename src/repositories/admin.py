@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from sqlalchemy import delete, select
+from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
 from src.domain.admin import AdminFilters, OrderBy
@@ -31,10 +31,8 @@ class AdminRepository(Repository):
             )
         )
 
-    async def delete_admin(self, admin_id: int) -> None:
-        await self._session.execute(
-            delete(AdminModel).where(AdminModel.id == admin_id)
-        )
+    async def delete_admin(self, admin_model: AdminModel) -> None:
+        await self._session.delete(admin_model)
 
 
 class SessionRepository(Repository):
@@ -46,7 +44,5 @@ class SessionRepository(Repository):
         )
         return (await self._session.execute(stmt)).scalar_one_or_none()
 
-    async def delete_session_by_token(self, token: UUID) -> None:
-        await self._session.execute(
-            delete(SessionModel).where(SessionModel.token == token)
-        )
+    async def delete_session(self, session_model: SessionModel) -> None:
+        await self._session.delete(session_model)
