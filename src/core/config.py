@@ -11,6 +11,7 @@ from src.core.pydantic_types import TimezoneInfo
 class AppSettings(BaseSettings, env_prefix="app_"):
     name: str = "Telegram Gifts Cases API"
     version: int = 1
+    session_token_expire: int
     secret_key: str
     docs_url: str = "/docs"
     redoc_url: str = "/redoc"
@@ -23,6 +24,7 @@ class CorsSettings(BaseSettings, env_prefix="cors_"):
 class DatabaseSettings(BaseSettings, env_prefix="postgres_"):
     db: str
     user: str
+    schema_name: str
     password: str
     host: str
     port: int
@@ -46,6 +48,11 @@ class TelegramSettings(BaseSettings, env_prefix="telegram_"):
     api_hash: str
     bot_token: str
     client_session: str
+    init_data_expire: int
+
+
+class RedisSettings(BaseSettings, env_prefix="redis_"):
+    password: str
 
 
 class RabbitSettings(BaseSettings, env_prefix="rabbitmq_"):
@@ -81,6 +88,8 @@ class Settings(BaseSettings):
     db: DatabaseSettings = Field(default_factory=DatabaseSettings)
     # Telegram
     telegram: TelegramSettings = Field(default_factory=TelegramSettings)
+    # Redis
+    redis: RedisSettings = Field(default_factory=RedisSettings)
     # RabbitMQ
     rabbit: RabbitSettings = Field(default_factory=RabbitSettings)
     # Portals API

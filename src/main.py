@@ -3,9 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import ORJSONResponse
 
 from src.core.config import settings
-from src.core.schemas.errors import ServerErrorSchema
-from src.core.schemas.validation import ValidationErrorListSchema
+from src.domain.errors import ServerErrorSchema
+from src.domain.validation import ValidationErrorListSchema
 from src.exception_handlers import get_exception_handlers
+from src.routers import admins_router, auth_router, users_router
 
 # App configuration
 app = FastAPI(
@@ -18,7 +19,7 @@ app = FastAPI(
     exception_handlers=get_exception_handlers(),
     default_response_class=ORJSONResponse,
     responses={
-        status.HTTP_422_UNPROCESSABLE_ENTITY: {
+        status.HTTP_422_UNPROCESSABLE_CONTENT: {
             "model": ValidationErrorListSchema,
             "description": "Validation Error",
             "content": {
@@ -68,5 +69,5 @@ app.add_middleware(
 )
 
 # Include routers
-for router in ():  # type: ignore[var-annotated]
+for router in (auth_router, admins_router, users_router):
     app.include_router(router)
