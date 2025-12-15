@@ -76,8 +76,8 @@ async def get_admin(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def update_admin(
-    admin_model: Annotated[AdminModel, Depends(get_admin_model)],
     admin_update: AdminUpdate,
+    admin_model: Annotated[AdminModel, Depends(get_admin_model)],
 ) -> None:
     for field_name, value in admin_update.model_dump().items():
         setattr(admin_model, field_name, value)
