@@ -24,6 +24,7 @@ class CorsSettings(BaseSettings, env_prefix="cors_"):
 class DatabaseSettings(BaseSettings, env_prefix="postgres_"):
     db: str
     user: str
+    schema_name: str
     password: str
     host: str
     port: int
@@ -48,6 +49,10 @@ class TelegramSettings(BaseSettings, env_prefix="telegram_"):
     bot_token: str
     client_session: str
     init_data_expire: int
+
+
+class RedisSettings(BaseSettings, env_prefix="redis_"):
+    password: str
 
 
 class RabbitSettings(BaseSettings, env_prefix="rabbitmq_"):
@@ -83,6 +88,8 @@ class Settings(BaseSettings):
     db: DatabaseSettings = Field(default_factory=DatabaseSettings)
     # Telegram
     telegram: TelegramSettings = Field(default_factory=TelegramSettings)
+    # Redis
+    redis: RedisSettings = Field(default_factory=RedisSettings)
     # RabbitMQ
     rabbit: RabbitSettings = Field(default_factory=RabbitSettings)
     # Portals API

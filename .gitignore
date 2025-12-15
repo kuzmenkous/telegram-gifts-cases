@@ -161,3 +161,7 @@ CLAUDE.md
 
 # Local tests
 local_tests/
+test_bot/
+
+# Custom documentation
+TONCONNECT_README.md
