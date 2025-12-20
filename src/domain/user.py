@@ -12,12 +12,17 @@ class StarsTicketsMixin(BaseModel):
     tickets: NonNegativeInt
 
 
-class UserRead(StarsTicketsMixin, IdSchema):
+class UserPreview(StarsTicketsMixin, IdSchema):
     first_name: str
     last_name: str | None = None
     username: str | None = None
     telegram_id: PositiveInt
+    photo_url: str | None = None
     created_at: datetime
+
+
+class UserRead(UserPreview):
+    referrals_count: NonNegativeInt
 
 
 class UserUpdate(StarsTicketsMixin, BaseModel):

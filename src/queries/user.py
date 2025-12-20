@@ -1,9 +1,18 @@
-from sqlalchemy import Select, select
+from sqlalchemy import Select, func, select
 
 from src.domain.user import UserFilters
 from src.models.user import UserModel
 
 _select_users_query = select(UserModel)
+
+referrals_count_subquery = (
+    select(UserModel.referrer_id, func.count().label("referrals_count"))
+    .group_by(UserModel.referrer_id)
+    .subquery()
+)
+referrals_count_expression = func.coalesce(
+    referrals_count_subquery.c.referrals_count, 0
+).label("referrals_count")
 
 
 def get_select_users_query(filters: UserFilters) -> Select[tuple[UserModel]]:
@@ -25,3 +34,9 @@ def get_select_users_query(filters: UserFilters) -> Select[tuple[UserModel]]:
     if filters.stars__ge is not None:
         stmt = stmt.where(UserModel.stars >= filters.stars__ge)
     return stmt
+
+
+def get_select_user_by_telegram_id_query(
+    telegram_id: int,
+) -> Select[tuple[UserModel]]:
+    return _select_users_query.where(UserModel.telegram_id == telegram_id)

@@ -31,8 +31,10 @@ def upgrade() -> None:
         sa.Column("last_name", sa.String(), nullable=True),
         sa.Column("username", sa.String(), nullable=True),
         sa.Column("telegram_id", sa.BigInteger(), nullable=False),
+        sa.Column("photo_url", sa.String(), nullable=True),
         sa.Column("stars", sa.Integer(), server_default="0", nullable=False),
         sa.Column("tickets", sa.Integer(), server_default="0", nullable=False),
+        sa.Column("referrer_id", sa.BigInteger(), nullable=True),
         sa.Column(
             "created_at",
             sa.DateTime(timezone=True),
@@ -46,6 +48,13 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.PrimaryKeyConstraint("id", name=op.f("pk__users")),
+        sa.ForeignKeyConstraint(
+            ["referrer_id"],
+            ["users.id"],
+            name=op.f("fk__users__referrer_id__users"),
+            onupdate="CASCADE",
+            ondelete="SET NULL",
+        ),
     )
     op.create_index(
         op.f("ix__users__telegram_id"), "users", ["telegram_id"], unique=True
