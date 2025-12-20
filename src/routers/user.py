@@ -13,7 +13,13 @@ from src.dependencies.user import (
 )
 from src.domain.base import ItemsPage, Pagination
 from src.domain.constants.api import openapi_extra_for_pagination
-from src.domain.user import OrderBy, UserFilters, UserRead, UserUpdate
+from src.domain.user import (
+    OrderBy,
+    UserFilters,
+    UserPreview,
+    UserRead,
+    UserUpdate,
+)
 from src.models.user import UserModel
 from src.services.user import UserService
 
@@ -27,8 +33,16 @@ async def users_auth(
     ],
     session: Session,
 ) -> UserRead:
+    referrer_telegram_id = None
+    if init_data.start_param is not None and init_data.start_param.startswith(
+        "r_"
+    ):
+        parsed_start_param = init_data.start_param[2:]
+        if parsed_start_param.isdigit() and int(parsed_start_param) > 0:
+            referrer_telegram_id = int(parsed_start_param)
+
     user_model = await UserService(session).get_or_create_user_with_init_data(
-        init_data.user  # type: ignore[arg-type]
+        init_data.user, referrer_telegram_id  # type: ignore[arg-type]
     )
     return UserRead.model_validate(user_model)
 
@@ -52,7 +66,7 @@ async def get_users(
     order_by: Annotated[
         OrderBy | SkipJsonSchema[None], Body(min_length=1)
     ] = None,
-) -> ItemsPage[UserRead]:
+) -> ItemsPage[UserPreview]:
     if order_by is None or len(order_by) == 0:
         order_by = {"created_at": "desc"}
 

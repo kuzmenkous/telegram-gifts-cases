@@ -12,7 +12,7 @@ from src.repositories.user import UserRepository
 
 
 async def get_verified_and_parsed_init_data(
-    init_data: str = Header(..., alias="Authorization")
+    init_data: str = Header(..., alias="Init-Data")
 ) -> WebAppInitData:
     try:
         parsed_data = safe_parse_webapp_init_data(
@@ -55,4 +55,4 @@ async def get_current_user(
 
 
 async def get_user_model(user_id: PositiveInt, session: Session) -> UserModel:
-    return await session.get_one(UserModel, user_id)
+    return await UserRepository(session).get_user(user_id)

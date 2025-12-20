@@ -1,10 +1,15 @@
 from sqlalchemy import select
+from sqlalchemy.orm import with_expression
 
 from src.domain.base import Pagination
 from src.domain.user import OrderBy, UserFilters
 from src.models.user import UserModel
 from src.queries.base import add_order_by_and_offset_limit_to_query
-from src.queries.user import get_select_users_query
+from src.queries.user import (
+    get_select_users_query,
+    referrals_count_expression,
+    referrals_count_subquery,
+)
 from src.repositories.base import Repository
 
 
@@ -21,9 +26,36 @@ class UserRepository(Repository):
             )
         )
 
+    async def get_user(self, user_id: int) -> UserModel:
+        return (
+            await self._session.execute(
+                select(UserModel)
+                .where(UserModel.id == user_id)
+                .outerjoin(
+                    referrals_count_subquery,
+                    referrals_count_subquery.c.referrer_id == UserModel.id,
+                )
+                .options(
+                    with_expression(
+                        UserModel.referrals_count, referrals_count_expression
+                    )
+                )
+            )
+        ).scalar_one()
+
     async def get_by_telegram_id(self, telegram_id: int) -> UserModel | None:
         return (
             await self._session.execute(
-                select(UserModel).where(UserModel.telegram_id == telegram_id)
+                select(UserModel)
+                .where(UserModel.telegram_id == telegram_id)
+                .outerjoin(
+                    referrals_count_subquery,
+                    referrals_count_subquery.c.referrer_id == UserModel.id,
+                )
+                .options(
+                    with_expression(
+                        UserModel.referrals_count, referrals_count_expression
+                    )
+                )
             )
         ).scalar_one_or_none()
